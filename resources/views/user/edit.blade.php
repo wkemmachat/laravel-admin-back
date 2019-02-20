@@ -45,9 +45,17 @@
                         <div class="box-body">
                                 <div class="register-box-body">
 
-                                        <form action="{{route('user.update',$userSelected->id)}}" method="post">
+                                        <form action="{{route('user.update',$userSelected->id)}}" method="post" enctype="multipart/form-data">
                                             @method('PATCH')
                                             @csrf
+
+                                            <div style="margin-bottom: 25px;">
+                                                <img src="{{$userSelected->photo ? $userSelected->photo->file : 'http://placehold.it/400x400'}}" alt="" class="img-responsive img-rounded"
+                                                style="display: block;
+                                                margin-left: auto;
+                                                margin-right: auto;">
+                                            </div>
+
                                             <div class="form-group has-feedback">
                                                 <input type="text" class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" placeholder="Full name" name="name" value="{{ $userSelected->name }}"  autofocus>
                                                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -86,6 +94,12 @@
                                             <div class="form-group has-feedback">
                                                 <input type="password" class="form-control" placeholder="Retype password" name="password_confirmation" >
                                                 <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label for="InputFile">Image Upload</label>
+                                                <input type="file" class="" id="InputFile" placeholder="" name="photo_id" >
                                             </div>
 
                                             <div class="form-group has-feedback">

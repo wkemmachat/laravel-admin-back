@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\User;
+use \App\Photo;
 use Gate;
 use Kamaln7\Toastr\Facades\Toastr;
 
@@ -66,6 +67,10 @@ class UserController extends Controller
             'user_type' => 'required|max:255',
         ]);
 
+        $this->validate($request, [
+            'photo_id' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
         if($request->user_type != 'user'){
             if($request->password !== $request->password_confirmation ){
 
@@ -95,7 +100,14 @@ class UserController extends Controller
                 return view('user.index',compact('users'));
             }
 
-            //bcrypt
+            // file
+            $save_photo_id = "";
+            if($file = $request->file('photo_id')) {
+                $name = time() . $file->getClientOriginalName();
+                $file->move('images', $name);
+                $photo = Photo::create(['file'=>$name]);
+                $save_photo_id = $photo->id;
+            }
 
             $user = new User();
             $user->name = $request['name'];
@@ -103,6 +115,7 @@ class UserController extends Controller
             $user->password = bcrypt($request['password']);
             $user->user_type = $request['user_type'];
             $user->active = 1;
+            $user->photo_id = $save_photo_id;
             $user->save();
 
         }else{
@@ -112,12 +125,22 @@ class UserController extends Controller
 
             // User::create($request);
 
+            // file
+            $save_photo_id = "";
+            if($file = $request->file('photo_id')) {
+                $name = time() . $file->getClientOriginalName();
+                $file->move('images', $name);
+                $photo = Photo::create(['file'=>$name]);
+                $save_photo_id = $photo->id;
+            }
+
             $user = new User();
             $user->name = $request['name'];
             $user->email = "";
             $user->password = "";
             $user->user_type = $request['user_type'];
             $user->active = 1;
+            $user->photo_id = $save_photo_id;
             $user->save();
 
 
@@ -151,6 +174,10 @@ class UserController extends Controller
             'user_type' => 'required|max:255',
         ]);
 
+        $this->validate($request, [
+            'photo_id' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
         if($request->user_type != 'user'){
             if($request->password !== $request->password_confirmation ){
 
@@ -180,7 +207,26 @@ class UserController extends Controller
                 return view('user.edit',compact('userSelected'));
             }
 
-            //bcrypt
+            // file
+            $save_photo_id = "";
+            if($file = $request->file('photo_id')) {
+
+                //delete first
+                // delete photo first
+                unlink(public_path() . $userSelected->photo->file);
+                $photoDatabaseToDelete = Photo::findOrFail($userSelected->photo_id);
+                $photoDatabaseToDelete->delete();
+
+
+                // save
+                $name = time() . $file->getClientOriginalName();
+                $file->move('images', $name);
+                $photo = Photo::create(['file'=>$name]);
+                $save_photo_id = $photo->id;
+
+                //save new photo
+                $userSelected->photo_id = $save_photo_id;
+            }
 
             // $user = new User();
             $userSelected->name = $request['name'];
@@ -193,7 +239,24 @@ class UserController extends Controller
         }else{
 
 
-            // save
+            // file
+            $save_photo_id = "";
+            if($file = $request->file('photo_id')) {
+
+                // delete photo first
+                unlink(public_path() . $userSelected->photo->file);
+                $photoDatabaseToDelete = Photo::findOrFail($userSelected->photo_id);
+                $photoDatabaseToDelete->delete();
+
+                // save
+                $name = time() . $file->getClientOriginalName();
+                $file->move('images', $name);
+                $photo = Photo::create(['file'=>$name]);
+                $save_photo_id = $photo->id;
+
+                //save new photo
+                $userSelected->photo_id = $save_photo_id;
+            }
 
             // User::create($request);
 

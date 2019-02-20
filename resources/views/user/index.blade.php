@@ -45,7 +45,7 @@
                         <div class="box-body">
                                 <div class="register-box-body">
 
-                                        <form action="{{route('user.store')}}" method="post">
+                                        <form action="{{route('user.store')}}" method="post" enctype="multipart/form-data">
                                             @csrf
 
                                             <div class="form-group has-feedback">
@@ -86,6 +86,11 @@
                                             <div class="form-group has-feedback">
                                                 <input type="password" class="form-control" placeholder="Retype password" name="password_confirmation" >
                                                 <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="InputFile">Image Upload</label>
+                                                <input type="file" class="" id="InputFile" placeholder="" name="photo_id" >
                                             </div>
 
                                             <div class="form-group has-feedback">
@@ -161,6 +166,7 @@
                                     <th>User Type</th>
                                     <th>Email</th>
                                     <th>Active</th>
+                                    <th>Pic</th>
                                     <th>Modify</th>
                                 </tr>
 
@@ -184,6 +190,7 @@
                                             ?>
                                             <a href="{{route('user.changeStatus',$user->id)}}"><span class="label label-{{$showClassActive}}">{{$showActive}}</span></a>
                                         </td>
+                                        <td><img height="50" src="{{$user->photo ? $user->photo->file : 'http://placehold.it/400x400'}}" alt="" ></td>
                                         <td><a href="{{ route('user.edit',$user->id) }}" class="btn btn-block btn-warning">Edit<a></td>
                                     </tr>
 
